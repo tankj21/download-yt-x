@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Hugging Face Spacesを利用してYouTubeやX (Twitter)の動画をスマホだけで最高画質でダウンロードできるWebツールです。">
+    <title>StreamVault - スマホ完結型 YouTube & X 動画ダウンローダー</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+    <div class="glass-bg"></div>
+    <div class="glow glow-1"></div>
+    <div class="glow glow-2"></div>
+
+    <header>
+        <div class="logo">
+            <i data-lucide="video" class="logo-icon"></i>
+            <h1>Stream<span>Vault</span></h1>
+        </div>
+        <button id="settingsBtn" class="badge settings-btn" title="接続先の設定">
+            <i data-lucide="settings" style="width: 14px; height: 14px;"></i>
+            <span class="status-text">サーバー設定</span>
+        </button>
+    </header>
+
+    <main>
+        <!-- 初期設定フォーム (接続先URLが未設定の場合に表示) -->
+        <section id="setupPanel" class="card hidden">
+            <h2><i data-lucide="sliders"></i> 接続先サーバーの設定</h2>
+            <p class="subtitle">ダウンロードを処理する Hugging Face Spaces のURLを入力してください。一度設定すると保存されます。</p>
+            
+            <form id="setupForm">
+                <div class="input-group">
+                    <label for="spaceUrl">
+                        <i data-lucide="link"></i> Hugging Face Space URL
+                    </label>
+                    <input type="url" id="spaceUrl" placeholder="https://huggingface.co/spaces/ユーザー名/スペース名" required>
+                    <p class="input-tip">※ 埋め込み用URL（embed=true付き）へ自動で変換されて接続されます。</p>
+                </div>
+
+                <button type="submit" class="btn btn-primary">
+                    <i data-lucide="save"></i>
+                    <span>設定を保存して接続</span>
+                </button>
+            </form>
+
+            <div class="divider" style="margin: 2rem 0;"></div>
+
+            <h3>💡 スペースをお持ちでない場合</h3>
+            <p class="guide-text">Hugging Faceで無料スペースを作成し、このアプリをデプロイしてください（1クリックで完了します）。詳細はリポジトリのREADMEをご覧ください。</p>
+        </section>
+
+        <!-- アプリ表示エリア (設定済みの場合に表示) -->
+        <section id="appContainer" class="iframe-container hidden">
+            <iframe id="appFrame" src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 StreamVault. Powered by <a href="https://github.com/yt-dlp/yt-dlp" target="_blank" rel="noopener">yt-dlp</a> & <a href="https://huggingface.co/spaces" target="_blank" rel="noopener">Hugging Face Spaces</a></p>
+    </footer>
+
+    <!-- インラインでの極小スクリプト (app.jsを削除したためここで処理) -->
+    <script>
+        const setupPanel = document.getElementById('setupPanel');
+        const appContainer = document.getElementById('appContainer');
+        const appFrame = document.getElementById('appFrame');
+        const setupForm = document.getElementById('setupForm');
+        const spaceUrlInput = document.getElementById('spaceUrl');
+        const settingsBtn = document.getElementById('settingsBtn');
+
+        // URLの保存と読み込み
+        function loadSpace() {
+            const savedUrl = localStorage.getItem('sv_space_url');
+            if (savedUrl) {
+                // 埋め込み用URL形式に整える
+                // 例: https://huggingface.co/spaces/user/name -> https://huggingface.co/spaces/user/name?embed=true
+                let embedUrl = savedUrl;
+                if (!embedUrl.includes('?embed=true') && !embedUrl.includes('&embed=true')) {
+                    embedUrl += (embedUrl.includes('?') ? '&' : '?') + 'embed=true';
+                }
+                appFrame.src = embedUrl;
+                appContainer.classList.remove('hidden');
+                setupPanel.classList.add('hidden');
+            } else {
+                appContainer.classList.add('hidden');
+                setupPanel.classList.remove('hidden');
+            }
+        }
+
+        // フォーム保存
+        setupForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            let url = spaceUrlInput.value.trim();
+            // 基本的なクレンジング
+            if (url) {
+                // 末尾のスラッシュを削除
+                if (url.endsWith('/')) {
+                    url = url.slice(0, -1);
+                }
+                localStorage.setItem('sv_space_url', url);
+                loadSpace();
+            }
+        });
+
+        // 設定ボタンクリックでトグル
+        settingsBtn.addEventListener('click', () => {
+            if (setupPanel.classList.contains('hidden')) {
+                setupPanel.classList.remove('hidden');
+                appContainer.classList.add('hidden');
+                // 入力欄に現在の値をセット
+                spaceUrlInput.value = localStorage.getItem('sv_space_url') || '';
+            } else {
+                loadSpace();
+            }
+        });
+
+        // 初期化
+        window.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            loadSpace();
+        });
+    </script>
+</body>
+</html>

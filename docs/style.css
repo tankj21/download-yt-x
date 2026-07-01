@@ -1,0 +1,599 @@
+/* デザインシステム定義 */
+:root {
+    --bg-primary: #080c14;
+    --bg-secondary: #0f1626;
+    --card-bg: rgba(255, 255, 255, 0.03);
+    --card-border: rgba(255, 255, 255, 0.06);
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --accent-start: #8b5cf6;
+    --accent-end: #ec4899;
+    --success: #10b981;
+    --danger: #ef4444;
+    --warning: #f59e0b;
+    --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --font-display: 'Outfit', var(--font-sans);
+    --glow-opacity: 0.15;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: var(--font-sans);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+    position: relative;
+}
+
+/* 背景グラデーション・グロー効果 */
+.glass-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 50% 0%, var(--bg-secondary) 0%, var(--bg-primary) 70%);
+    z-index: -3;
+}
+
+.glow {
+    position: absolute;
+    width: 600px;
+    height: 600px;
+    border-radius: 50%;
+    filter: blur(150px);
+    opacity: var(--glow-opacity);
+    pointer-events: none;
+    z-index: -2;
+}
+
+.glow-1 {
+    top: -200px;
+    left: -100px;
+    background: var(--accent-start);
+}
+
+.glow-2 {
+    bottom: -100px;
+    right: -100px;
+    background: var(--accent-end);
+}
+
+/* ヘッダー */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2rem 5%;
+    max-width: 1200px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.logo-icon {
+    width: 2rem;
+    height: 2rem;
+    color: var(--accent-start);
+    filter: drop-shadow(0 0 8px var(--accent-start));
+}
+
+.logo h1 {
+    font-family: var(--font-display);
+    font-size: 1.75rem;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+}
+
+.logo h1 span {
+    background: linear-gradient(135deg, var(--accent-start), var(--accent-end));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* 接続状態バッジ */
+.badge {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 9999px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    transition: all 0.3s ease;
+}
+
+.badge .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.badge.connected {
+    background: rgba(16, 185, 129, 0.1);
+    color: var(--success);
+    border-color: rgba(16, 185, 129, 0.2);
+}
+
+.badge.connected .dot {
+    background-color: var(--success);
+    box-shadow: 0 0 10px var(--success);
+    animation: pulse 1.5s infinite alternate;
+}
+
+.badge.disconnected {
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--danger);
+    border-color: rgba(239, 68, 68, 0.2);
+}
+
+.badge.disconnected .dot {
+    background-color: var(--danger);
+    box-shadow: 0 0 8px var(--danger);
+}
+
+/* メインコンテンツ */
+main {
+    flex: 1;
+    max-width: 800px;
+    width: 90%;
+    margin: 1rem auto 4rem auto;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+/* ガラスモルフィズムカード */
+.card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 20px;
+    padding: 2.5rem;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3), 0 0 1px var(--card-border);
+}
+
+h2 {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.subtitle {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    margin-bottom: 2rem;
+    line-height: 1.5;
+}
+
+/* フォーム */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.input-group label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.input-group label i {
+    width: 14px;
+    height: 14px;
+}
+
+input[type="url"], input[type="text"] {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 0.875rem 1rem;
+    color: var(--text-primary);
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+input[type="url"]:focus, input[type="text"]:focus {
+    border-color: var(--accent-start);
+    background: rgba(255, 255, 255, 0.05);
+    box-shadow: 0 0 12px rgba(139, 92, 246, 0.15);
+}
+
+/* ボタン */
+.btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    font-weight: 600;
+    padding: 1rem;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--accent-start), var(--accent-end));
+    color: white;
+    box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+}
+
+.btn-primary:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(139, 92, 246, 0.45);
+}
+
+.btn-primary:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.btn:disabled {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-secondary);
+    box-shadow: none;
+    cursor: not-allowed;
+}
+
+/* 進捗表示エリア */
+.progress-area {
+    margin-top: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.progress-area.hidden {
+    display: none;
+}
+
+.divider {
+    height: 1px;
+    background: rgba(255, 255, 255, 0.08);
+    width: 100%;
+}
+
+.video-info {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    background: rgba(255, 255, 255, 0.02);
+    padding: 1rem;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.info-icon {
+    width: 1.5rem;
+    height: 1.5rem;
+    color: var(--accent-start);
+    flex-shrink: 0;
+    margin-top: 0.2rem;
+}
+
+.info-details {
+    overflow: hidden;
+}
+
+.video-title {
+    font-size: 1rem;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.video-filename {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-top: 0.25rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.progress-bar-container {
+    width: 100%;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 9999px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--accent-start), var(--accent-end));
+    border-radius: 9999px;
+    transition: width 0.3s cubic-bezier(0.1, 0.8, 0.1, 1);
+    position: relative;
+}
+
+.progress-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    background: rgba(255, 255, 255, 0.01);
+    padding: 1rem;
+    border-radius: 12px;
+}
+
+.stat {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.stat-label {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.stat-value {
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+
+/* ステータス別の文字カラー */
+.status-starting { color: var(--text-secondary); }
+.status-downloading { color: var(--accent-start); }
+.status-merging { color: var(--warning); }
+.status-completed { color: var(--success); }
+.status-failed { color: var(--danger); }
+
+/* セットアップガイド */
+.guide-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.step {
+    display: flex;
+    gap: 1.25rem;
+    align-items: flex-start;
+}
+
+.step-num {
+    width: 2rem;
+    height: 2rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    color: var(--accent-start);
+    font-size: 0.9rem;
+    flex-shrink: 0;
+}
+
+.step-content h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.35rem;
+}
+
+.step-content p {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+.step-content a {
+    color: var(--accent-start);
+    text-decoration: none;
+    border-bottom: 1px dashed var(--accent-start);
+    transition: color 0.3s;
+}
+
+.step-content a:hover {
+    color: var(--accent-end);
+    border-color: var(--accent-end);
+}
+
+.setup-list {
+    margin-top: 0.5rem;
+    list-style: none;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.setup-list li {
+    margin-bottom: 0.25rem;
+    padding-left: 1rem;
+    position: relative;
+}
+
+.setup-list li::before {
+    content: "•";
+    color: var(--accent-end);
+    position: absolute;
+    left: 0;
+}
+
+.setup-list code {
+    background: rgba(255, 255, 255, 0.08);
+    padding: 0.1rem 0.3rem;
+    border-radius: 4px;
+    font-family: monospace;
+    color: var(--text-primary);
+}
+
+/* コードボックス */
+.code-box {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    margin-top: 0.5rem;
+    font-family: monospace;
+    font-size: 0.85rem;
+}
+
+.code-box code {
+    color: var(--text-primary);
+}
+
+.copy-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 0.25rem;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.3s, background-color 0.3s;
+}
+
+.copy-btn:hover {
+    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.copy-btn i {
+    width: 16px;
+    height: 16px;
+}
+
+/* フッター */
+footer {
+    text-align: center;
+    padding: 2rem;
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.03);
+    width: 100%;
+}
+
+footer a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    transition: color 0.3s;
+}
+
+footer a:hover {
+    color: var(--text-primary);
+    border-color: var(--text-primary);
+}
+
+/* アニメーション定義 */
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4);
+    }
+    100% {
+        box-shadow: 0 0 0 10px rgba(16, 185, 129, 0);
+    }
+}
+
+/* iframe コンテナ */
+.iframe-container {
+    width: 100%;
+    height: 750px;
+    border-radius: 20px;
+    overflow: hidden;
+    border: 1px solid var(--card-border);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    background: var(--bg-secondary);
+}
+
+.iframe-container iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+.settings-btn {
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+    transition: all 0.3s ease;
+}
+
+.settings-btn:hover {
+    background: rgba(139, 92, 246, 0.15);
+    border-color: rgba(139, 92, 246, 0.3);
+    color: var(--accent-start);
+}
+
+.input-tip {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    margin-top: 0.25rem;
+}
+
+.guide-text {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-top: 0.5rem;
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 600px) {
+    header {
+        flex-direction: column;
+        gap: 1rem;
+        padding: 1.5rem 5%;
+    }
+
+    .card {
+        padding: 1.5rem;
+    }
+
+    .progress-stats {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
+    }
+}
