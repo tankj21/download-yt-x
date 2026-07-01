@@ -85,7 +85,7 @@ theme = gr.themes.Soft(
     button_primary_text_color="white",
 )
 
-with gr.Blocks(theme=theme, title="StreamVault - Video Downloader") as demo:
+with gr.Blocks(title="StreamVault - Video Downloader") as demo:
     gr.Markdown(
         """
         # 🎬 StreamVault
@@ -117,4 +117,4 @@ with gr.Blocks(theme=theme, title="StreamVault - Video Downloader") as demo:
     )
 
 if __name__ == "__main__":
-    demo.launch(server_name="127.0.0.1")
+    demo.launch(server_name="127.0.0.1", theme=theme)

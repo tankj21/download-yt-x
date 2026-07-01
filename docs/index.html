@@ -75,9 +75,11 @@
         const spaceUrlInput = document.getElementById('spaceUrl');
         const settingsBtn = document.getElementById('settingsBtn');
 
+        const DEFAULT_SPACE_URL = 'https://huggingface.co/spaces/tankj21/StreamVault';
+
         // URLの保存と読み込み
         function loadSpace() {
-            const savedUrl = localStorage.getItem('sv_space_url');
+            const savedUrl = localStorage.getItem('sv_space_url') || DEFAULT_SPACE_URL;
             if (savedUrl) {
                 // 埋め込み用URL形式に整える
                 // 例: https://huggingface.co/spaces/user/name -> https://huggingface.co/spaces/user/name?embed=true
