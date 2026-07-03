@@ -16,6 +16,11 @@
     --glow-opacity: 0.15;
 }
 
+/* ユーティリティ */
+.hidden {
+    display: none !important;
+}
+
 * {
     box-sizing: border-box;
     margin: 0;
@@ -76,6 +81,38 @@ header {
     max-width: 1200px;
     width: 100%;
     margin: 0 auto;
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.btn-icon {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: var(--text-primary);
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    outline: none;
+}
+
+.btn-icon:hover {
+    background: rgba(139, 92, 246, 0.15);
+    border-color: rgba(139, 92, 246, 0.3);
+    color: var(--accent-start);
+    transform: rotate(30deg);
+}
+
+.btn-icon i {
+    width: 1.25rem;
+    height: 1.25rem;
 }
 
 .logo {
@@ -146,6 +183,27 @@ header {
 .badge.disconnected .dot {
     background-color: var(--danger);
     box-shadow: 0 0 8px var(--danger);
+}
+
+.badge.custom-api {
+    background: rgba(139, 92, 246, 0.1);
+    color: #a78bfa;
+    border-color: rgba(139, 92, 246, 0.2);
+}
+
+.badge.custom-api .dot {
+    background-color: #a78bfa;
+    box-shadow: 0 0 10px #a78bfa;
+    animation: pulse-purple 1.5s infinite alternate;
+}
+
+@keyframes pulse-purple {
+    0% {
+        box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.4);
+    }
+    100% {
+        box-shadow: 0 0 0 10px rgba(139, 92, 246, 0);
+    }
 }
 
 /* メインコンテンツ */
@@ -536,48 +594,114 @@ footer a:hover {
     }
 }
 
-/* iframe コンテナ */
-.iframe-container {
-    width: 100%;
-    height: 750px;
-    border-radius: 20px;
+/* ステータスエリア */
+.status-area {
+    margin-top: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.status-area.hidden {
+    display: none;
+}
+
+.status-box {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    background: rgba(255, 255, 255, 0.02);
+    padding: 1.5rem;
+    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    animation: fadeIn 0.4s ease;
+}
+
+.status-box.hidden {
+    display: none;
+}
+
+.status-details {
+    flex: 1;
     overflow: hidden;
-    border: 1px solid var(--card-border);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-    background: var(--bg-secondary);
 }
 
-.iframe-container iframe {
-    width: 100%;
-    height: 100%;
-    border: none;
+.status-details h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
 }
 
-.settings-btn {
-    cursor: pointer;
-    background: rgba(255, 255, 255, 0.05);
-    border-color: rgba(255, 255, 255, 0.1);
-    color: var(--text-primary);
-    transition: all 0.3s ease;
-}
-
-.settings-btn:hover {
-    background: rgba(139, 92, 246, 0.15);
-    border-color: rgba(139, 92, 246, 0.3);
-    color: var(--accent-start);
-}
-
-.input-tip {
-    font-size: 0.75rem;
+.status-sub {
+    font-size: 0.85rem;
     color: var(--text-secondary);
-    margin-top: 0.25rem;
 }
 
-.guide-text {
+.video-title {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    margin-bottom: 1rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* スピナーアニメーション */
+.spinner {
+    width: 2.5rem;
+    height: 2.5rem;
+    border: 3px solid rgba(255, 255, 255, 0.05);
+    border-top: 3px solid var(--accent-start);
+    border-right: 3px solid var(--accent-end);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    flex-shrink: 0;
+}
+
+/* 成功・エラー時のアイコン */
+.success-icon {
+    width: 2.5rem;
+    height: 2.5rem;
+    color: var(--success);
+    filter: drop-shadow(0 0 8px rgba(16, 185, 129, 0.4));
+    flex-shrink: 0;
+}
+
+.error-icon {
+    width: 2.5rem;
+    height: 2.5rem;
+    color: var(--danger);
+    filter: drop-shadow(0 0 8px rgba(239, 68, 68, 0.4));
+    flex-shrink: 0;
+}
+
+.error-message {
     font-size: 0.9rem;
     color: var(--text-secondary);
-    line-height: 1.6;
-    margin-top: 0.5rem;
+}
+
+/* 成功ボタン */
+.btn-success {
+    background: linear-gradient(135deg, #059669, #10b981);
+    color: white;
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+    text-decoration: none;
+    display: inline-flex;
+}
+
+.btn-success:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.45);
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 /* レスポンシブ対応 */
@@ -596,4 +720,41 @@ footer a:hover {
         grid-template-columns: repeat(2, 1fr);
         gap: 0.75rem;
     }
+}
+
+/* API設定パネル専用スタイル */
+.settings-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.settings-header .btn-icon:hover {
+    transform: none; /* 閉じるボタンは回転させない */
+    background: rgba(239, 68, 68, 0.1);
+    border-color: rgba(239, 68, 68, 0.2);
+    color: var(--danger);
+}
+
+.btn-group {
+    display: flex;
+    gap: 1rem;
+    margin-top: 0.5rem;
+}
+
+.btn-secondary {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: var(--text-secondary);
+}
+
+.btn-secondary:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+    transform: translateY(-2px);
+}
+
+.btn-secondary:active:not(:disabled) {
+    transform: translateY(0);
 }

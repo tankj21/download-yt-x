@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Hugging Face Spacesを利用してYouTubeやX (Twitter)の動画をスマホだけで最高画質でダウンロードできるWebツールです。">
-    <title>StreamVault - スマホ完結型 YouTube & X 動画ダウンローダー</title>
+    <meta name="description" content="YouTubeやX (Twitter)の動画をスマホだけで最高画質でダウンロードできるWebツールです。サーバー不要、設定不要でURLを入れるだけで即座に保存できます。">
+    <title>StreamVault - YouTube & X 高画質動画ダウンローダー</title>
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -23,111 +23,146 @@
             <i data-lucide="video" class="logo-icon"></i>
             <h1>Stream<span>Vault</span></h1>
         </div>
-        <button id="settingsBtn" class="badge settings-btn" title="接続先の設定">
-            <i data-lucide="settings" style="width: 14px; height: 14px;"></i>
-            <span class="status-text">サーバー設定</span>
-        </button>
+        <div class="header-actions">
+            <button id="settingsBtn" class="btn-icon" title="API設定">
+                <i data-lucide="settings"></i>
+            </button>
+            <div id="connectionBadge" class="connection-badge badge connected">
+                <span class="dot"></span>
+                <span class="status-text">パブリックAPI</span>
+            </div>
+        </div>
     </header>
 
     <main>
-        <!-- 初期設定フォーム (接続先URLが未設定の場合に表示) -->
-        <section id="setupPanel" class="card hidden">
-            <h2><i data-lucide="sliders"></i> 接続先サーバーの設定</h2>
-            <p class="subtitle">ダウンロードを処理する Hugging Face Spaces のURLを入力してください。一度設定すると保存されます。</p>
+        <!-- API設定パネル -->
+        <section id="settingsPanel" class="card hidden">
+            <div class="settings-header">
+                <h2><i data-lucide="settings"></i> API設定</h2>
+                <button type="button" id="closeSettingsBtn" class="btn-icon" title="閉じる">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+            <p class="subtitle">ダウンロードに使用するCobalt APIエンドポイントを設定できます。</p>
             
-            <form id="setupForm">
+            <form id="settingsForm">
                 <div class="input-group">
-                    <label for="spaceUrl">
-                        <i data-lucide="link"></i> Hugging Face Space URL
+                    <label for="apiUrl">
+                        <i data-lucide="server"></i> Cobalt API URL
                     </label>
-                    <input type="url" id="spaceUrl" placeholder="https://huggingface.co/spaces/ユーザー名/スペース名" required>
-                    <p class="input-tip">※ 埋め込み用URL（embed=true付き）へ自動で変換されて接続されます。</p>
+                    <input type="url" id="apiUrl" placeholder="https://api.cobalt.tools (空欄でデフォルトのパブリックAPI)">
+                    <p class="input-tip">※ パブリックAPIでエラーが発生する場合は、ご自身で構築されたCobalt APIのURL（例: `https://your-cobalt-instance.koyeb.app`）を設定してください。</p>
                 </div>
 
-                <button type="submit" class="btn btn-primary">
-                    <i data-lucide="save"></i>
-                    <span>設定を保存して接続</span>
+                <div class="btn-group">
+                    <button type="submit" class="btn btn-primary">
+                        <i data-lucide="save"></i>
+                        <span>設定を保存</span>
+                    </button>
+                    <button type="button" id="resetApiBtn" class="btn btn-secondary">
+                        <i data-lucide="rotate-ccw"></i>
+                        <span>デフォルトに戻す</span>
+                    </button>
+                </div>
+            </form>
+        </section>
+
+        <section id="downloader" class="card">
+            <h2>動画のダウンロード</h2>
+            <p class="subtitle">YouTube や X (Twitter) の動画URLを入力してください。自動的に最高画質でダウンロードします。</p>
+            
+            <form id="downloadForm">
+                <div class="input-group">
+                    <label for="url">
+                        <i data-lucide="link"></i> 動画URL
+                    </label>
+                    <input type="url" id="url" placeholder="https://www.youtube.com/watch?v=... または https://x.com/..." required>
+                </div>
+
+                <button type="submit" id="downloadBtn" class="btn btn-primary">
+                    <i data-lucide="download"></i>
+                    <span>ダウンロード開始</span>
                 </button>
             </form>
 
-            <div class="divider" style="margin: 2rem 0;"></div>
+            <!-- ステータス・ダウンロードエリア -->
+            <div id="statusArea" class="status-area hidden">
+                <div class="divider"></div>
+                
+                <!-- ローディング状態 -->
+                <div id="loadingState" class="status-box">
+                    <div class="spinner"></div>
+                    <div class="status-details">
+                        <h3 id="statusText">動画を解析中...</h3>
+                        <p class="status-sub">高画質で映像と音声をマージしています。これには数十秒かかる場合があります。</p>
+                    </div>
+                </div>
 
-            <h3>💡 スペースをお持ちでない場合</h3>
-            <p class="guide-text">Hugging Faceで無料スペースを作成し、このアプリをデプロイしてください（1クリックで完了します）。詳細はリポジトリのREADMEをご覧ください。</p>
+                <!-- 完了状態 -->
+                <div id="successState" class="status-box hidden">
+                    <i data-lucide="check-circle" class="success-icon"></i>
+                    <div class="status-details">
+                        <h3>ダウンロードの準備ができました！</h3>
+                        <p id="videoTitle" class="video-title">動画タイトルを取得しました</p>
+                        <a id="saveLink" href="#" class="btn btn-success" download>
+                            <i data-lucide="save"></i>
+                            <span>スマホに保存する</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- エラー状態 -->
+                <div id="errorState" class="status-box hidden">
+                    <i data-lucide="alert-triangle" class="error-icon"></i>
+                    <div class="status-details">
+                        <h3>エラーが発生しました</h3>
+                        <p id="errorMsg" class="error-message">動画の解析に失敗しました。URLが正しいかご確認ください。</p>
+                    </div>
+                </div>
+            </div>
         </section>
 
-        <!-- アプリ表示エリア (設定済みの場合に表示) -->
-        <section id="appContainer" class="iframe-container hidden">
-            <iframe id="appFrame" src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        <!-- スマホでの使い方ガイド -->
+        <section id="usageGuide" class="card">
+            <h2><i data-lucide="smartphone"></i> スマホでの使い方</h2>
+            <p class="subtitle">設定やアプリのインストールは不要です。コピーして貼り付けるだけで即座に保存できます。</p>
+            
+            <div class="guide-steps">
+                <div class="step">
+                    <div class="step-num">1</div>
+                    <div class="step-content">
+                        <h3>URLのコピー</h3>
+                        <p>ダウンロードしたいYouTubeまたはXの動画URLを共有メニュー等からコピーします。</p>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-num">2</div>
+                    <div class="step-content">
+                        <h3>URLの貼り付け</h3>
+                        <p>上のフォームにURLを貼り付けて「ダウンロード開始」をタップします。</p>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-num">3</div>
+                    <div class="step-content">
+                        <h3>動画の保存</h3>
+                        <p>解析が終わると「スマホに保存する」ボタンが現れます。タップすると、スマホのアルバムやダウンロードフォルダに動画が直接保存されます。</p>
+                    </div>
+                </div>
+            </div>
         </section>
     </main>
 
     <footer>
-        <p>&copy; 2026 StreamVault. Powered by <a href="https://github.com/yt-dlp/yt-dlp" target="_blank" rel="noopener">yt-dlp</a> & <a href="https://huggingface.co/spaces" target="_blank" rel="noopener">Hugging Face Spaces</a></p>
+        <p>&copy; 2026 StreamVault. Powered by Cobalt API</p>
     </footer>
 
-    <!-- インラインでの極小スクリプト (app.jsを削除したためここで処理) -->
+    <script src="app.js"></script>
     <script>
-        const setupPanel = document.getElementById('setupPanel');
-        const appContainer = document.getElementById('appContainer');
-        const appFrame = document.getElementById('appFrame');
-        const setupForm = document.getElementById('setupForm');
-        const spaceUrlInput = document.getElementById('spaceUrl');
-        const settingsBtn = document.getElementById('settingsBtn');
-
-        const DEFAULT_SPACE_URL = 'https://huggingface.co/spaces/tankj21/StreamVault';
-
-        // URLの保存と読み込み
-        function loadSpace() {
-            const savedUrl = localStorage.getItem('sv_space_url') || DEFAULT_SPACE_URL;
-            if (savedUrl) {
-                // 埋め込み用URL形式に整える
-                // 例: https://huggingface.co/spaces/user/name -> https://huggingface.co/spaces/user/name?embed=true
-                let embedUrl = savedUrl;
-                if (!embedUrl.includes('?embed=true') && !embedUrl.includes('&embed=true')) {
-                    embedUrl += (embedUrl.includes('?') ? '&' : '?') + 'embed=true';
-                }
-                appFrame.src = embedUrl;
-                appContainer.classList.remove('hidden');
-                setupPanel.classList.add('hidden');
-            } else {
-                appContainer.classList.add('hidden');
-                setupPanel.classList.remove('hidden');
-            }
-        }
-
-        // フォーム保存
-        setupForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            let url = spaceUrlInput.value.trim();
-            // 基本的なクレンジング
-            if (url) {
-                // 末尾のスラッシュを削除
-                if (url.endsWith('/')) {
-                    url = url.slice(0, -1);
-                }
-                localStorage.setItem('sv_space_url', url);
-                loadSpace();
-            }
-        });
-
-        // 設定ボタンクリックでトグル
-        settingsBtn.addEventListener('click', () => {
-            if (setupPanel.classList.contains('hidden')) {
-                setupPanel.classList.remove('hidden');
-                appContainer.classList.add('hidden');
-                // 入力欄に現在の値をセット
-                spaceUrlInput.value = localStorage.getItem('sv_space_url') || '';
-            } else {
-                loadSpace();
-            }
-        });
-
-        // 初期化
-        window.addEventListener('DOMContentLoaded', () => {
-            lucide.createIcons();
-            loadSpace();
-        });
+        // Lucideアイコンの初期化
+        lucide.createIcons();
     </script>
 </body>
 </html>
